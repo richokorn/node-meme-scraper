@@ -10,3 +10,4 @@ memes
 *.tsbuildinfo
 .test.js
 .test3.js
+.tests

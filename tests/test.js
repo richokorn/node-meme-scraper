@@ -76,7 +76,9 @@ function cutHTML() {
 
 // // Program Start
 
-if (process.argv[3] == 'number') {
+function numberOption() {}
+
+if (process.argv[3] === 'number') {
   const scrapeTotal = process.argv[4];
   let miniCount = 0;
   while (miniCount < scrapeTotal) {
@@ -86,7 +88,7 @@ if (process.argv[3] == 'number') {
     download(miniCount < 10 ? '0' + miniCount : miniCount);
     cutHTML();
   }
-} else if (process.argv[3] == 'custom') {
+} else if (process.argv[3] === 'custom') {
   if (process.argv[4]) {
     https.get(specialString, (res) => {
       const path = `./memes/${process.argv[4]} - ${process.argv[5]} - ${process.argv[6]}.jpg`;
@@ -117,7 +119,7 @@ if (process.argv[3] == 'number') {
     }
   });
   console.log(templateArray);
-} else if (process.argv[3] == 'help') {
+} else if (process.argv[3] === 'help') {
   console.log(`
   Need help? Gotcha fam.
 

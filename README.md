@@ -23,15 +23,15 @@ Link in Question: https://memegen-link-examples-upleveled.netlify.app/
 
   - [x] Search the website for the `src` of the `img` tags (the URL of the images)
 
-- [ ] Download the images: for each of the images:
+- [x] Download the images: for each of the images:
 
   - [x] Retrieve the URL (src) to the current image
   - [x] Limit the loop to only the first 10 images
-    - [ ] Download the image data from the URL in a variable
-    - [ ] Save the image to `memes` using a counting up title `01.jpg`, `02.jpg`, and so on until `10.jpg`
+    - [x] Download the image data from the URL in a variable
+    - [x] Save the image to `memes` using a counting up title `01.jpg`, `02.jpg`, and so on until `10.jpg`
 
-- [ ] The program should be able to run multiple times
-  - [ ] The program should first delete/clear the contents of the `memes` folder so subsequent runs have an empty folder to work with.
+- [x] The program should be able to run multiple times
+  - [x] The program should first delete/clear the contents of the `memes` folder so subsequent runs have an empty folder to work with.
 
 ## Plan: Research -> Write Code -> Finalize
 
