@@ -1,5 +1,5 @@
-import fs from 'fs';
-import https from 'https';
+import fs from 'node:fs';
+import https from 'node:https';
 import fetch from 'node-fetch';
 
 // code for fetching, currently fetches entire body, this works.
@@ -64,7 +64,7 @@ if (process.argv[2]) {
     https.get(srcString, (res) => {
       const path = `./memes/${i}.jpg`;
       const writeStream = fs.createWriteStream(path);
-      console.log(i);
+      console.log(`Downloading: ${i}`);
       res.pipe(writeStream);
       writeStream.on('finish', () => {
         writeStream.close();
