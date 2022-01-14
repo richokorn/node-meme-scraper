@@ -11,9 +11,7 @@ const response = await fetch(
 let dumpHTML = await response.text();
 let indexOfFirst = dumpHTML.indexOf(`src="https://api.memegen.link/images/`);
 let indexOfLast = dumpHTML.indexOf('?width=300');
-let indexOfSlash = dumpHTML.indexOf('/', indexOfFirst + 37);
 let srcString = dumpHTML.slice(indexOfFirst + 5, indexOfLast);
-let srcTemplate = dumpHTML.slice(indexOfFirst + 37, indexOfSlash);
 const specialString = `https://api.memegen.link/images/${process.argv[3]}/${process.argv[2]}.jpg`;
 
 // this function renews the indexes,
@@ -21,10 +19,7 @@ const specialString = `https://api.memegen.link/images/${process.argv[3]}/${proc
 function renewIndexes() {
   indexOfFirst = dumpHTML.indexOf(`src="https://api.memegen.link/images/`);
   indexOfLast = dumpHTML.indexOf('?width=300');
-  indexOfSlash = dumpHTML.indexOf('/', indexOfFirst + 37);
   srcString = dumpHTML.slice(indexOfFirst + 5, indexOfLast);
-  srcTemplate = dumpHTML.slice(indexOfFirst + 37, indexOfSlash);
-  return indexOfFirst, indexOfLast, indexOfSlash, srcString, srcTemplate;
 }
 
 // A function to remove everything from the start of the dumpHTML
