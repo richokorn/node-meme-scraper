@@ -2,77 +2,151 @@ import fs from 'node:fs';
 import https from 'node:https';
 import fetch from 'node-fetch';
 
-// code for fetching, currently fetches entire body, this works.
+// Fetch and assign HTML code from link.
 const response = await fetch(
   'https://memegen-link-examples-upleveled.netlify.app/',
 );
 
 // Variable Declarations
+
 let dumpHTML = await response.text();
 let indexOfFirst = dumpHTML.indexOf(`src="https://api.memegen.link/images/`);
-let indexOfLast = dumpHTML.indexOf('?width=300');
-let srcString = dumpHTML.slice(indexOfFirst + 5, indexOfLast);
-const specialString = `https://api.memegen.link/images/${process.argv[3]}/${process.argv[2]}.jpg`;
+let indexOfLast = dumpHTML.indexOf('.jpg?width=300');
+let indexOfSlash = dumpHTML.indexOf('/', indexOfFirst + 37);
+let srcString = dumpHTML.slice(indexOfFirst + 5, indexOfLast + 4);
+let srcTemplate = dumpHTML.slice(indexOfFirst + 37, indexOfSlash);
 
-// this function renews the indexes,
-// Expected: new index numbers reassigned once the original one has been cut out after cutHTML() has been called.
-function renewIndexes() {
-  indexOfFirst = dumpHTML.indexOf(`src="https://api.memegen.link/images/`);
-  indexOfLast = dumpHTML.indexOf('?width=300');
-  srcString = dumpHTML.slice(indexOfFirst + 5, indexOfLast);
-}
+// Nested shorthand if expression to check if there are
+// arguments for top and bottom text
+const specialString = `https://api.memegen.link/images/${process.argv[3]}${
+  process.argv[4]
+    ? `/${process.argv[4]}${process.argv[5] ? `/${process.argv[5]}` : ''}`
+    : ''
+}.jpg`;
 
-// A function to remove everything from the start of the dumpHTML
-// including up until the end of and including the first instance of `?width=300`
-function cutHTML() {
-  dumpHTML = dumpHTML.slice(indexOfLast + 10);
-  return dumpHTML;
-}
+// Declares 'templateArray' which has many meme templates assigned to.
+const templateArray = [];
 
-// A function to check all templates in templateArray and remove `.jpg?width=300" `
+// // All the functions:
 
-// Logic to repeat the cut and renew functions 10 times and print the HTML results in the console
-// Download logic is primarily from: https://sebhastian.com/nodejs-download-file/ - 2021 - How to download a file using NodeJS without any extra package
-// Printing to console happens *before* `cutHTML();` because we'd lose the first meme
+// many thanks to José Fernando Höwer Barbosa for helping me understand writing pure functions for asynchronous things
+// good energy to you my friend
 
-// STRETCH
-
-if (process.argv[2]) {
-  https.get(specialString, (res) => {
-    const path = `./memes/${process.argv[2]} - ${process.argv[3]}.jpg`;
+// This function handles downloading the image itself, filenaming and pathing
+function download(i, x) {
+  https.get(srcString, (res) => {
+    const path = `./memes/${i}.jpg`;
     const writeStream = fs.createWriteStream(path);
-    console.log(
-      `Now using ${specialString} to create a "${process.argv[3]}" meme with the top text of "${process.argv[2]}".`,
-    );
     res.pipe(writeStream);
     writeStream.on('finish', () => {
       writeStream.close();
     });
+    console.log(`Saving ${i}: ${x}`);
   });
-} else {
-  let count = 0;
+}
 
-  // many thanks to José Fernando Höwer Barbosa for helping me understand writing pure functions for asynchronous things
-  // good energy to you my friend
+// This function renews the indexes,
+function renewIndexes() {
+  indexOfFirst = dumpHTML.indexOf(`src="https://api.memegen.link/images/`);
+  indexOfLast = dumpHTML.indexOf('?width=300');
+  indexOfSlash = dumpHTML.indexOf('/', indexOfFirst + 37);
+  srcString = dumpHTML.slice(indexOfFirst + 5, indexOfLast);
+  srcTemplate = dumpHTML.slice(indexOfFirst + 37, indexOfSlash);
+}
 
-  function download(i) {
-    https.get(srcString, (res) => {
-      const path = `./memes/${i}.jpg`;
+// A function to remove everything from the start of the current dumpHTML
+// Up until
+function cutHTML() {
+  dumpHTML = dumpHTML.slice(indexOfLast + 10);
+}
+
+// // Program Start
+
+if (process.argv[2] === 'scrape') {
+  const scrapeTotal = process.argv[3];
+  if (process.argv[3] < 50) {
+    console.log(`
+    Now scraping the first ${process.argv[3]} memes.
+    `);
+  } else {
+    console.log(`
+    Now scraping the first ${process.argv[3]} memes.
+    RIP console terminal.
+    `);
+  }
+  let miniCount = 0;
+  while (miniCount < scrapeTotal) {
+    miniCount++;
+    renewIndexes();
+    download(miniCount < 10 ? '0' + miniCount : miniCount, srcString);
+    cutHTML();
+  }
+}
+// Nested shorthand if expressions to check if there is
+// top and bottom text, or no text at all
+// to make an appropriate file-name title.
+else if (process.argv[2] === 'custom') {
+  if (process.argv[3]) {
+    https.get(specialString, (res) => {
+      const path = `./memes/${process.argv[3]}${
+        process.argv[4]
+          ? ` - ${process.argv[4]}${
+              process.argv[5] ? ` - ${process.argv[5]}` : ''
+            }`
+          : ''
+      }.jpg`;
+
       const writeStream = fs.createWriteStream(path);
-      console.log(`Downloading: ${i}`);
+
+      // Prints a confirmation message to the console using
+      // nested shorthand if expressions to check if there is
+      // top and bottom text, or no text at all.
+      console.log(`
+Now saving ${specialString}.
+It is a ${process.argv[3]} meme${
+        process.argv[4]
+          ? ` with a top text of ${process.argv[4]}${
+              process.argv[5] ? ` and a bottom text of ${process.argv[5]}` : ''
+            }`
+          : ''
+      }.
+`);
       res.pipe(writeStream);
       writeStream.on('finish', () => {
         writeStream.close();
       });
     });
   }
-
-  while (count < 10) {
-    count++;
+  let templateCount = 0;
+  while (templateCount < 50) {
+    templateCount++;
     renewIndexes();
-    console.log(`Now retrieving ${count}: ${srcString}`);
-    download(count < 10 ? '0' + count : count);
+    templateArray.push(srcTemplate);
     cutHTML();
   }
-  console.log('Download Completed');
+  templateArray.forEach((element, index) => {
+    const position = element.search('.jpg');
+    if (position > -1) {
+      templateArray[index] = element.substring(0, position);
+    }
+  });
+  console.log(templateArray);
+} else {
+  console.log(`
+    ### Welcome to the Meme Scraper! ###
+
+    My thanks go to Karl and José for explaining Sync & Async differences.
+
+    Valid arguments:
+
+    - [scrape] [10]
+      Scrapes the first 10 memes. Try changing the number!
+
+    - [custom]
+      Shows a list of several meme templates.
+
+    - [custom] [doge] [karl_and_jose] [thankyou!]
+      Downloads a doge meme with top text "karl and jose"
+      and a bottom text of "thankyou!"
+      `);
 }
