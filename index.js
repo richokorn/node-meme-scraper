@@ -16,13 +16,11 @@ let indexOfSlash = dumpHTML.indexOf('/', indexOfFirst + 37);
 let srcString = dumpHTML.slice(indexOfFirst + 5, indexOfLast + 4);
 let srcTemplate = dumpHTML.slice(indexOfFirst + 37, indexOfSlash);
 
-// Nested shorthand if expression to check if there are
-// arguments for top and bottom text
 const specialString = `https://api.memegen.link/images/${process.argv[3]}${
   process.argv[4]
     ? `/${process.argv[4]}${process.argv[5] ? `/${process.argv[5]}` : ''}`
     : ''
-}.jpg`;
+}.jpg`; // Nested shorthand if-statments to check if there are arguments for top and bottom text for an appropriate download URL.
 
 // Declares 'templateArray' which has many meme templates assigned to.
 const templateArray = [];
@@ -82,7 +80,7 @@ if (process.argv[2] === 'scrape') {
     cutHTML();
   }
 }
-// Nested shorthand if expressions to check if there is
+// Nested shorthand if-statments to check if there is
 // top and bottom text, or no text at all
 // to make an appropriate file-name title.
 else if (process.argv[2] === 'custom') {
@@ -98,8 +96,8 @@ else if (process.argv[2] === 'custom') {
 
       const writeStream = fs.createWriteStream(path);
 
-      // Prints a confirmation message to the console using
-      // nested shorthand if expressions to check if there is
+      // Prints message to the console using
+      // nested shorthand if-statments  to check if there is
       // top and bottom text, or no text at all.
       console.log(`
 Now saving ${specialString}.
@@ -127,7 +125,7 @@ It is a ${process.argv[3]} meme${
   templateArray.forEach((element, index) => {
     const position = element.search('.jpg');
     if (position > -1) {
-      templateArray[index] = element.substring(0, position);
+      templateArray[index] = element.slice(0, position);
     }
   });
   console.log(templateArray);
