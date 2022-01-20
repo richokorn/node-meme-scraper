@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
-  "repository": "https://github.com/richokorn/node.js-meme-scraper.git",
+  "repository": "https://github.com/richokorn/node-meme-scraper",
   "author": "Richard Korn <richo.korn@gmail.com>",
   "license": "MIT",
   "devDependencies": {
